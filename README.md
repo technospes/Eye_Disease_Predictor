@@ -78,13 +78,21 @@ The model (`dr_efficientnet_b2_224@93d017f472c3`) was trained on **ODIR-5K** (`n
 | **ODIR-5K** | Validation | 914 | 25.16% | **0.8075** `[0.776, 0.839]` | 0.6655 | 70.9% | 77.5% |
 | **ODIR-5K** | Internal Test | 914 | 25.16% | **0.7840** `[0.747, 0.819]` | 0.6032 | 60.9% | 79.1% |
 | **APTOS-2019** | External Test 1 (Zero-Shot) | 3,530 | 49.12% | **0.8548** `[0.842, 0.867]` | 0.8846 | 76.5% | 80.4% |
-| **IDRiD** | External Test 2 (Zero-Shot) | 455 | 71.65% | **0.8754** `[0.841, 0.907]` | 0.9479 | 96.3% | 33.3% |
+| **IDRiD** | External Test 2 (Zero-Shot) | 455 | 71.65% | **0.8754** `[0.8414, 0.9067]` | **0.9479** `[0.9312, 0.9624]` | **96.32%** `[93.68%, 97.88%]` | **33.33%** `[25.78%, 41.85%]` |
 
 ### How to read these results
 
 - **Ranking quality transfers across hospitals.** External AUROC (0.85–0.88) is at least as high as internal AUROC (0.78–0.81), which suggests the model learned DR-relevant features rather than dataset-specific artifacts. External cohorts have a higher proportion of moderate-to-severe disease, which generally makes the positive class easier to separate.
 - **The operating point does not transfer equally well.** On IDRiD the fixed threshold gives very high sensitivity (96.3%) but low specificity (33.3%). This is a threshold/prevalence effect rather than a ranking failure: the cohort's positive rate (71.65%) and its camera and grading conditions differ markedly from ODIR's (25.16%). **Any real deployment should recalibrate the threshold on a local validation sample** from the target site.
 - **Metrics are cohort-specific.** AUPRC depends on prevalence, so it should not be compared directly across rows.
+
+> ### **Empirical IDRiD Cohort Evaluation Summary**
+> - **Evaluated Scans ($N$):** **455** (0 skipped)
+> - **AUROC (95% CI):** **0.8754** `[0.8414, 0.9067]`
+> - **AUPRC (95% CI):** **0.9479** `[0.9312, 0.9624]`
+> - **Sensitivity (Wilson 95% CI):** **96.32%** `[93.68%, 97.88%]` (*314 True Positives / 12 False Negatives*)
+> - **Specificity (Wilson 95% CI):** **33.33%** `[25.78%, 41.85%]` (*43 True Negatives / 86 False Positives*)
+> - **Locked Operating Threshold:** **0.4761** ( Youden $J$ optimized on ODIR validation split )
 
 <div align="center">
 <img src="docs/gradcam_grid.png" alt="Grad-CAM saliency grid" width="900"/>
