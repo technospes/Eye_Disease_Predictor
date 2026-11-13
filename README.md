@@ -338,7 +338,6 @@ Outputs are written next to the model artifacts: `idrid_external_benchmark.json`
 ## Author
 
 **Ayush Shukla**
-B.Tech CSE, Galgotias College of Engineering and Technology
 [GitHub](https://github.com/technospes) · [LinkedIn](https://www.linkedin.com/in/ayushshukla-ar/)
 
 ---
