@@ -42,7 +42,7 @@ log = logging.getLogger("artss.api")
 IMAGENET_MEAN = (0.485, 0.456, 0.406)
 IMAGENET_STD = (0.229, 0.224, 0.225)
 MIN_RETINA_FRACTION = 0.05
-ALLOWED_FORMATS = {"JPEG", "PNG", "TIFF"}
+ALLOWED_FORMATS = {"JPEG", "PNG", "TIFF", "WEBP"}
 DISCLAIMER = ("Decision-support output only; not a diagnosis. Results must be reviewed by a qualified clinician.")
 
 
@@ -210,8 +210,12 @@ def validate_upload(raw: bytes, s: Settings) -> None:
     try:
         with Image.open(io.BytesIO(raw)) as im:
             fmt, (w, h) = im.format, im.size
+            # Normalize WEBP/MPO/etc to standard format equivalents if needed
+            if fmt == "WEBP":
+                fmt = "WEBP"
     except Exception as exc:
         raise InputError("File is not a readable image.") from exc
+    
     if fmt not in ALLOWED_FORMATS:
         raise InputError(f"Unsupported image format {fmt!r}; allowed: {sorted(ALLOWED_FORMATS)}.")
     if min(w, h) < s.min_side:
@@ -221,7 +225,13 @@ def validate_upload(raw: bytes, s: Settings) -> None:
 
 
 def preprocess(raw: bytes, cfg: PreprocessConfig) -> tuple[np.ndarray, np.ndarray, dict]:
-    img = cv2.imdecode(np.frombuffer(raw, dtype=np.uint8), cv2.IMREAD_COLOR)
+    # Decode robustly via PIL first to handle WebP/RGBA/TIFF channels cleanly
+    try:
+        pil_img = Image.open(io.BytesIO(raw)).convert("RGB")
+        img = cv2.cvtColor(np.array(pil_img), cv2.COLOR_RGB2BGR)
+    except Exception:
+        img = cv2.imdecode(np.frombuffer(raw, dtype=np.uint8), cv2.IMREAD_COLOR)
+        
     if img is None:
         raise InputError("Could not decode image.")
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
