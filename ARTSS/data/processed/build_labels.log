@@ -1,0 +1,17 @@
+01:21:02 INFO    Manifest: 11662 rows; datasets with labels logic: ['ODIR', 'APTOS']
+01:21:02 INFO    ODIR: per-eye 'labels' and 'D' column agree on 91.9% of rows.
+01:21:02 WARNING ODIR: 'D' disagrees with the per-eye labels on 8.1% of rows - it is probably patient-level, so a healthy eye can inherit the other eye's disease.
+01:21:02 INFO    ODIR: 6392/8000 usable images labelled; 1608 unlabelled; 0 labels have no image; 0 ambiguous filenames
+01:21:02 INFO    APTOS: test.csv -> 366 labelled rows
+01:21:02 INFO    APTOS: train_1.csv -> 2930 labelled rows
+01:21:02 INFO    APTOS: valid.csv -> 366 labelled rows
+01:21:02 INFO    APTOS: 3534/3534 usable images labelled; 0 unlabelled; 0 labels have no image; 0 ambiguous filenames
+01:21:02 WARNING 4 images have conflicting labels (see label_conflicts.csv); excluding them.
+01:21:02 INFO    Wrote 9922 labelled images in 6865 split groups -> D:\Eye_Disease_Predictor\ARTSS\data\processed\training_labels.csv
+01:21:02 INFO    Class counts:
+dataset  dr_label
+APTOS    0           1796
+         1           1734
+ODIR     0           4784
+         1           1608
+01:21:02 INFO    Audit: D:\Eye_Disease_Predictor\ARTSS\data\processed\label_audit.json

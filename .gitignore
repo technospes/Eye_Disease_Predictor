@@ -1,0 +1,22 @@
+# Virtual environments & caches
+venv/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Exclude raw & processed datasets (thousands of images & row manifests)
+ARTSS/data/raw/
+ARTSS/data/processed/*.png
+ARTSS/data/processed/*.csv
+ARTSS/data/processed/splits_meta.json
+ARTSS/data/processed/aptos/
+ARTSS/data/processed/odir/
+*.zip
+
+# Keep best model & evaluation JSONs, ignore temporary checkpoints & caches
+ARTSS/models/*_last.pt
+ARTSS/models/*.tmp
+ARTSS/models/*.npz
+ARTSS/models/idrid_predictions.csv
+api_gradcam_test.png

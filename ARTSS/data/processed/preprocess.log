@@ -1,0 +1,6 @@
+00:39:07 INFO    ODIR: found 8000 images under D:\Eye_Disease_Predictor\ARTSS\data\raw\ODIR-5k\ODIR-5K
+00:39:07 INFO    APTOS: found 3662 images under D:\Eye_Disease_Predictor\ARTSS\data\raw\APTOS-2019
+00:39:14 INFO    Processing 11534 unique images with 4 worker(s)
+00:46:04 INFO    Done. Status counts: {'ok': 11534, 'duplicate_exact': 128}
+00:46:04 INFO    Near-duplicate groups (size>1): 25, largest: 4
+00:46:04 INFO    Manifest: D:\Eye_Disease_Predictor\ARTSS\data\processed\manifest.csv

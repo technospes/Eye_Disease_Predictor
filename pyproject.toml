@@ -1,0 +1,7 @@
+[tool.pytest.ini_options]
+pythonpath = [".", "ARTSS/src"]
+testpaths = ["ARTSS/tests"]
+
+[tool.pyright]
+extraPaths = [".", "ARTSS/src"]
+typeCheckingMode = "off"

@@ -1,0 +1,136 @@
+{
+  "best_epoch": 10,
+  "best_val_auroc": 0.8075355962369691,
+  "results": {
+    "val": {
+      "auroc": 0.8075355962369691,
+      "auprc": 0.6654692716753026,
+      "bce": 0.5416677594184875,
+      "weighted_bce": 0.9594156742095947,
+      "auroc_ci95": [
+        0.7759396409402534,
+        0.8390133410730243
+      ],
+      "n": 914,
+      "at_val_youden_threshold": {
+        "threshold": 0.4761076867580414,
+        "sensitivity": 0.7086956521739131,
+        "specificity": 0.7748538011695907,
+        "ppv": 0.5141955835962145,
+        "npv": 0.8877721943048577,
+        "tp": 163,
+        "fp": 154,
+        "tn": 530,
+        "fn": 67
+      }
+    },
+    "test_internal": {
+      "auroc": 0.7840230104246123,
+      "auprc": 0.6032377536642269,
+      "bce": 0.5812643766403198,
+      "weighted_bce": 1.090993881225586,
+      "auroc_ci95": [
+        0.7465105935826701,
+        0.8185443581708024
+      ],
+      "n": 914,
+      "at_val_youden_threshold": {
+        "threshold": 0.4761076867580414,
+        "sensitivity": 0.6086956521739131,
+        "specificity": 0.7909356725146199,
+        "ppv": 0.49469964664310956,
+        "npv": 0.8573692551505546,
+        "tp": 140,
+        "fp": 143,
+        "tn": 541,
+        "fn": 90
+      }
+    },
+    "test_external": {
+      "auroc": 0.8547619919184757,
+      "auprc": 0.8845785040008627,
+      "bce": 0.5235339403152466,
+      "weighted_bce": 1.1587700843811035,
+      "auroc_ci95": [
+        0.8424758288971251,
+        0.8666321129178716
+      ],
+      "n": 3530,
+      "at_val_youden_threshold": {
+        "threshold": 0.4761076867580414,
+        "sensitivity": 0.765282583621684,
+        "specificity": 0.8040089086859689,
+        "ppv": 0.7903513996426444,
+        "npv": 0.7801188546731497,
+        "tp": 1327,
+        "fp": 352,
+        "tn": 1444,
+        "fn": 407
+      }
+    }
+  },
+  "config": {
+    "root": "/content",
+    "processed_dir": null,
+    "models_dir": null,
+    "backup_dir": "/content/drive/MyDrive/Eye_Disease_Predictor",
+    "tag": null,
+    "backbone": "efficientnet_b2",
+    "image_size": 224,
+    "batch_size": 16,
+    "num_workers": null,
+    "epochs": 10,
+    "lr": 0.0001,
+    "weight_decay": 0.01,
+    "min_lr_ratio": 0.01,
+    "warmup_epochs": 1.0,
+    "clip": 1.0,
+    "drop_rate": 0.3,
+    "drop_path_rate": 0.1,
+    "ema_decay": 0.998,
+    "amp": "auto",
+    "balanced_sampler": false,
+    "no_pos_weight": false,
+    "patience": 6,
+    "min_delta": 0.0001,
+    "max_skips": 20,
+    "bootstrap": 1000,
+    "seed": 42,
+    "resume": false,
+    "pos_weight": 2.975609756097561,
+    "amp_dtype": "torch.float16",
+    "data_info": {
+      "image_size": 224,
+      "stored_size": 512,
+      "enhanced": true,
+      "label_col": "dr_label",
+      "num_workers": 1,
+      "balanced_sampler": false,
+      "counts": {
+        "train": 4564,
+        "val": 914,
+        "test_internal": 914,
+        "test_external": 3530
+      },
+      "positive_rate": {
+        "train": 0.2515,
+        "val": 0.2516,
+        "test_internal": 0.2516,
+        "test_external": 0.4912
+      },
+      "pos_weight": 2.975609756097561,
+      "normalize": {
+        "mean": [
+          0.485,
+          0.456,
+          0.406
+        ],
+        "std": [
+          0.229,
+          0.224,
+          0.225
+        ]
+      }
+    }
+  }
+}

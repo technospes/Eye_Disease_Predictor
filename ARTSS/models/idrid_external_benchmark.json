@@ -1,0 +1,42 @@
+{
+  "external_cohort": "IDRiD (Indian Diabetic Retinopathy Image Dataset)",
+  "model_version": "dr_efficientnet_b2_224@93d017f472c3",
+  "evaluated_n": 455,
+  "skipped_n": 0,
+  "skip_reasons": {},
+  "positive_rate": 0.7165,
+  "auroc": 0.8754,
+  "auroc_95ci": [
+    0.8414,
+    0.9067
+  ],
+  "auprc": 0.9479,
+  "auprc_95ci": [
+    0.9312,
+    0.9624
+  ],
+  "threshold_locked": 0.4761,
+  "sensitivity": 0.9632,
+  "sensitivity_95ci_wilson": [
+    0.9368,
+    0.9788
+  ],
+  "specificity": 0.3333,
+  "specificity_95ci_wilson": [
+    0.2578,
+    0.4185
+  ],
+  "confusion_matrix": {
+    "tp": 314,
+    "tn": 43,
+    "fp": 86,
+    "fn": 12
+  },
+  "grade_distribution": {
+    "0": 129,
+    "1": 22,
+    "2": 156,
+    "3": 84,
+    "4": 64
+  }
+}

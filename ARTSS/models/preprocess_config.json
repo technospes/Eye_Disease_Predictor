@@ -1,0 +1,33 @@
+{
+  "config": {
+    "size": 512,
+    "border_thresh": 10,
+    "sigma_ratio": 0.03333333333333333,
+    "mask_ratio": 0.9,
+    "enhance": true
+  },
+  "config_digest": "d8315e443bde",
+  "near_dup_max_bits": 10,
+  "phash_size": 16,
+  "datasets": {
+    "ODIR": "D:\\Eye_Disease_Predictor\\ARTSS\\data\\raw\\ODIR-5k\\ODIR-5K",
+    "APTOS": "D:\\Eye_Disease_Predictor\\ARTSS\\data\\raw\\APTOS-2019"
+  },
+  "versions": {
+    "python": "3.11.9",
+    "opencv": "4.8.1",
+    "numpy": "1.26.3",
+    "imagehash": "4.3.1"
+  },
+  "started_utc": "2026-11-12T19:09:07.465734+00:00",
+  "state": "complete",
+  "finished_utc": "2026-11-12T19:16:04.163119+00:00",
+  "counts": {
+    "ok": 11534,
+    "duplicate_exact": 128
+  },
+  "near_dup": {
+    "groups_gt1": 25,
+    "largest": 4
+  }
+}

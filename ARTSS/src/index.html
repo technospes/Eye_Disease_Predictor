@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ARTSS — Retinal DR Screening Workstation</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --bg-page: #f2f7f4;
+      --bg-card: #ffffff;
+      --bg-subtle: #e6f0ea;
+      --border-muted: #cddbd2;
+      --text-main: #162a22;
+      --text-muted: #526b60;
+      --accent-green: #1f6f54;
+      --accent-green-hover: #185842;
+    }
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    .clinical-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-muted);
+      box-shadow: 0 1px 2px rgba(22, 42, 34, 0.04);
+    }
+    .drop-active {
+      border-color: var(--accent-green) !important;
+      background-color: #e3f1e9 !important;
+    }
+    .btn-primary {
+      background-color: var(--accent-green);
+      color: #ffffff;
+    }
+    .btn-primary:hover:not(:disabled) {
+      background-color: var(--accent-green-hover);
+    }
+    .btn-primary:disabled {
+      background-color: #dce6e0;
+      color: #7a9186;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+  <!-- Header -->
+  <header class="bg-white border-b border-[#cddbd2] px-6 py-3.5 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="h-2.5 w-2.5 rounded-full bg-emerald-600" id="status-dot"></div>
+      <h1 class="text-base font-semibold tracking-tight text-[#162a22]">
+        ARTSS <span class="text-[#526b60] font-normal">| Ophthalmic DR Screening Workstation</span>
+      </h1>
+    </div>
+    <div id="model-badge" class="text-xs font-mono bg-[#e6f0ea] text-[#1f5643] px-3 py-1 rounded border border-[#bfd4c8]">
+      Connecting to engine...
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <!-- Left Column: Input & Telemetry (4 cols) -->
+    <section class="lg:col-span-4 flex flex-col gap-5">
+      <!-- Upload Card -->
+      <div class="clinical-card rounded-lg p-5 flex flex-col gap-4">
+        <div class="flex items-center justify-between border-b border-[#e4ede8] pb-2.5">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-[#3b5449]">1. Fundus Image Input</h2>
+          <span class="text-[11px] font-mono text-[#526b60]">224×224px CNN</span>
+        </div>
+
+        <label id="dropzone" class="border-2 border-dashed border-[#b6ccc0] hover:border-[#1f6f54] bg-[#f8fbf9] transition rounded-lg p-6 flex flex-col items-center justify-center text-center cursor-pointer min-h-[175px]">
+          <input type="file" id="file-input" accept="image/png,image/jpeg,image/tiff,.tif,.tiff" class="hidden" />
+          <svg class="w-8 h-8 text-[#3f6a58] mb-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+          </svg>
+          <p class="text-sm font-medium text-[#162a22]" id="file-name">Select or drop retinal fundus scan</p>
+          <p class="text-xs text-[#526b60] mt-1">PNG, JPEG, or TIFF • Min 128×128px</p>
+        </label>
+
+        <div class="flex items-center justify-between text-xs text-[#284237] pt-0.5">
+          <label class="flex items-center gap-2 cursor-pointer select-none">
+            <input type="checkbox" id="gradcam-toggle" checked class="rounded border-[#9ab5a7] text-[#1f6f54] focus:ring-0" />
+            <span>Compute Grad-CAM Activation Overlay</span>
+          </label>
+        </div>
+
+        <input type="password" id="api-key-input" placeholder="Optional X-API-Key header" class="w-full text-xs bg-[#f8fbf9] border border-[#cddbd2] rounded px-3 py-2 text-[#162a22] placeholder-[#7a9186] focus:outline-none focus:border-[#1f6f54]" />
+
+        <button id="analyze-btn" disabled class="btn-primary w-full py-2.5 px-4 rounded font-medium text-sm transition flex items-center justify-center gap-2">
+          <span>Run Clinical Screening</span>
+        </button>
+
+        <div id="error-box" class="hidden text-xs bg-red-50 border border-red-300 text-red-800 rounded p-3"></div>
+      </div>
+
+      <!-- Telemetry Card -->
+      <div class="clinical-card rounded-lg p-5 flex flex-col gap-4">
+        <div class="flex items-center justify-between border-b border-[#e4ede8] pb-2.5">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-[#3b5449]">2. Screening Telemetry</h2>
+          <span id="latency-tag" class="text-xs font-mono text-[#526b60]">— ms</span>
+        </div>
+
+        <div id="verdict-banner" class="rounded p-3.5 border border-[#cddbd2] bg-[#f4f9f6] text-center">
+          <p class="text-[11px] uppercase tracking-wider text-[#526b60] font-semibold">Decision Support Output</p>
+          <p id="diagnosis-text" class="text-lg font-bold text-[#2b4439] mt-0.5">Awaiting Scan</p>
+        </div>
+
+        <!-- Probability Scale -->
+        <div class="space-y-1.5">
+          <div class="flex justify-between text-xs">
+            <span class="text-[#526b60] font-medium">DR Probability Score</span>
+            <span id="prob-val" class="font-mono font-semibold text-[#162a22]">—</span>
+          </div>
+          <div class="relative w-full h-3 bg-[#e6f0ea] rounded overflow-hidden border border-[#bfd4c8]">
+            <div id="prob-bar" class="h-full bg-[#1f6f54] transition-all duration-300" style="width: 0%"></div>
+            <div id="thresh-marker" class="absolute top-0 bottom-0 w-0.5 bg-amber-700" style="left: 47.61%" title="Youden Operating Threshold"></div>
+          </div>
+          <div class="flex justify-between text-[11px] text-[#526b60] font-mono">
+            <span>0.0 (Normal)</span>
+            <span id="thresh-label" class="text-amber-800 font-semibold">Cut-off: 0.4761</span>
+            <span>1.0 (DR)</span>
+          </div>
+        </div>
+
+        <!-- Physical Quality Metrics -->
+        <div class="grid grid-cols-3 gap-2 pt-2 border-t border-[#e4ede8] text-center">
+          <div class="bg-[#f4f9f6] p-2.5 rounded border border-[#d6e4dc]">
+            <p class="text-[11px] text-[#526b60]">Sharpness</p>
+            <p id="q-blur" class="text-sm font-mono font-semibold text-[#162a22] mt-0.5">—</p>
+          </div>
+          <div class="bg-[#f4f9f6] p-2.5 rounded border border-[#d6e4dc]">
+            <p class="text-[11px] text-[#526b60]">Brightness</p>
+            <p id="q-bright" class="text-sm font-mono font-semibold text-[#162a22] mt-0.5">—</p>
+          </div>
+          <div class="bg-[#f4f9f6] p-2.5 rounded border border-[#d6e4dc]">
+            <p class="text-[11px] text-[#526b60]">Retina Area</p>
+            <p id="q-area" class="text-sm font-mono font-semibold text-[#162a22] mt-0.5">—</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Column: Side-by-Side Retinal Viewer (8 cols) -->
+    <section class="lg:col-span-8 clinical-card rounded-lg p-5 flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between border-b border-[#e4ede8] pb-2.5 mb-4">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-[#3b5449]">3. Retinal Inspection & Grad-CAM Saliency</h2>
+          <span id="req-id" class="text-xs font-mono text-[#526b60]">Request ID: —</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Raw Input Preview -->
+          <div class="bg-[#f4f9f6] border border-[#cddbd2] rounded-lg p-3 flex flex-col items-center">
+            <div class="w-full flex justify-between items-center mb-2 px-1">
+              <span class="text-xs font-semibold text-[#284237]">Original Fundus Photograph</span>
+              <span class="text-[11px] font-mono text-[#526b60]">Raw Input</span>
+            </div>
+            <div class="w-full aspect-square rounded bg-[#101915] flex items-center justify-center overflow-hidden border border-[#b8ccc1]">
+              <img id="raw-preview" class="hidden w-full h-full object-contain" alt="Uploaded Fundus" />
+              <span id="raw-placeholder" class="text-xs text-[#8aa397] px-4 text-center">No scan loaded</span>
+            </div>
+          </div>
+
+          <!-- Grad-CAM Output -->
+          <div class="bg-[#f4f9f6] border border-[#cddbd2] rounded-lg p-3 flex flex-col items-center">
+            <div class="w-full flex justify-between items-center mb-2 px-1">
+              <span class="text-xs font-semibold text-[#284237]">Grad-CAM Feature Attribution</span>
+              <span class="text-[11px] font-mono text-[#526b60]">conv_head layer</span>
+            </div>
+            <div class="w-full aspect-square rounded bg-[#101915] flex items-center justify-center overflow-hidden border border-[#b8ccc1]">
+              <img id="cam-preview" class="hidden w-full h-full object-contain" alt="Grad-CAM Overlay" />
+              <span id="cam-placeholder" class="text-xs text-[#8aa397] px-4 text-center">Run screening to overlay spatial activation map</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="border-t border-[#e4ede8] pt-3 mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-[#526b60]">
+        <span id="disclaimer-foot">Decision-support output only; not a diagnosis. Results must be reviewed by a qualified clinician.</span>
+        <span class="font-mono text-[11px]">Ben Graham σ=1/30 • Youden J Calibrated</span>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const fileInput = document.getElementById('file-input');
+    const dropzone = document.getElementById('dropzone');
+    const fileNameEl = document.getElementById('file-name');
+    const analyzeBtn = document.getElementById('analyze-btn');
+    const rawPreview = document.getElementById('raw-preview');
+    const rawPlaceholder = document.getElementById('raw-placeholder');
+    const camPreview = document.getElementById('cam-preview');
+    const camPlaceholder = document.getElementById('cam-placeholder');
+    const errorBox = document.getElementById('error-box');
+
+    let selectedFile = null;
+
+    // Resolve FastAPI origin automatically whether opened via http://127.0.0.1:8000, Live Server, or file://
+    const API_BASE = (window.location.protocol === 'file:' || (window.location.port && window.location.port !== '8000'))
+      ? 'http://127.0.0.1:8000'
+      : '';
+
+    async function checkReady() {
+      const dot = document.getElementById('status-dot');
+      const badge = document.getElementById('model-badge');
+      try {
+        const res = await fetch(`${API_BASE}/ready`);
+        const data = await res.json();
+        if (res.ok) {
+          dot.className = 'h-2.5 w-2.5 rounded-full bg-emerald-600';
+          badge.textContent = `${data.model_version} • ${data.device.toUpperCase()} • ${data.image_size}px`;
+          const thrPct = (data.operating_threshold * 100).toFixed(2);
+          document.getElementById('thresh-marker').style.left = `${thrPct}%`;
+          document.getElementById('thresh-label').textContent = `Cut-off: ${data.operating_threshold.toFixed(4)}`;
+        } else {
+          throw new Error(data.detail || 'Not ready');
+        }
+      } catch (e) {
+        dot.className = 'h-2.5 w-2.5 rounded-full bg-red-600';
+        badge.textContent = 'Engine Offline (Start app.py on :8000)';
+      }
+    }
+    checkReady();
+
+    function handleFile(file) {
+      if (!file) return;
+      selectedFile = file;
+      fileNameEl.textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+      analyzeBtn.disabled = false;
+      errorBox.classList.add('hidden');
+
+      // Reset previous Grad-CAM result when selecting a new image
+      camPreview.classList.add('hidden');
+      camPreview.removeAttribute('src');
+      camPlaceholder.classList.remove('hidden');
+      camPlaceholder.textContent = 'Run screening to overlay spatial activation map';
+
+      const isTiff = /\.tiff?$/i.test(file.name) || file.type === 'image/tiff';
+      if (isTiff) {
+        rawPreview.classList.add('hidden');
+        rawPlaceholder.classList.remove('hidden');
+        rawPlaceholder.textContent = 'TIFF file selected (browser preview unsupported; server will decode)';
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        rawPreview.src = e.target.result;
+        rawPreview.classList.remove('hidden');
+        rawPlaceholder.classList.add('hidden');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length) handleFile(e.target.files[0]);
+      fileInput.value = ''; // Allows re-selecting the exact same file
+    });
+    dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('drop-active'); });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drop-active'));
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('drop-active');
+      if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+    });
+
+    analyzeBtn.addEventListener('click', async () => {
+      if (!selectedFile) return;
+      analyzeBtn.disabled = true;
+      analyzeBtn.innerHTML = '<span>Processing Retinal Scan...</span>';
+      errorBox.classList.add('hidden');
+
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+      const wantCam = document.getElementById('gradcam-toggle').checked;
+      const apiKey = document.getElementById('api-key-input').value.trim();
+      const headers = apiKey ? { 'X-API-Key': apiKey } : {};
+
+      try {
+        const res = await fetch(`${API_BASE}/predict?gradcam=${wantCam}`, {
+          method: 'POST',
+          headers,
+          body: formData
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || `HTTP ${res.status}`);
+
+        // Refresh connection badge in case it was offline earlier
+        checkReady();
+
+        const pct = (data.dr_probability * 100).toFixed(2);
+        document.getElementById('prob-val').textContent = `${pct}% (${data.dr_probability.toFixed(4)})`;
+        const probBar = document.getElementById('prob-bar');
+        probBar.style.width = `${pct}%`;
+        probBar.className = `h-full transition-all duration-300 ${data.dr_positive ? 'bg-amber-700' : 'bg-[#1f6f54]'}`;
+
+        const banner = document.getElementById('verdict-banner');
+        const diagText = document.getElementById('diagnosis-text');
+        diagText.textContent = data.diagnosis;
+        if (data.dr_positive) {
+          banner.className = 'rounded p-3.5 border border-amber-400 bg-amber-50 text-center';
+          diagText.className = 'text-lg font-bold text-amber-900 mt-0.5';
+        } else {
+          banner.className = 'rounded p-3.5 border border-[#8ec4aa] bg-[#e6f4ed] text-center';
+          diagText.className = 'text-lg font-bold text-[#15543e] mt-0.5';
+        }
+
+        document.getElementById('q-blur').textContent = data.quality_metrics.blur_score.toFixed(2);
+        document.getElementById('q-bright').textContent = data.quality_metrics.brightness.toFixed(1);
+        document.getElementById('q-area').textContent = `${(data.quality_metrics.retina_area_frac * 100).toFixed(1)}%`;
+        document.getElementById('latency-tag').textContent = `${data.latency_ms} ms`;
+        document.getElementById('req-id').textContent = `Request ID: ${data.request_id}`;
+        document.getElementById('disclaimer-foot').textContent = data.disclaimer;
+
+        if (data.gradcam_png_base64) {
+          camPreview.src = `data:image/png;base64,${data.gradcam_png_base64}`;
+          camPreview.classList.remove('hidden');
+          camPlaceholder.classList.add('hidden');
+        } else {
+          camPreview.classList.add('hidden');
+          camPlaceholder.classList.remove('hidden');
+          camPlaceholder.textContent = 'Grad-CAM disabled for this request';
+        }
+      } catch (err) {
+        errorBox.textContent = `Screening Error: ${err.message}`;
+        errorBox.classList.remove('hidden');
+      } finally {
+        analyzeBtn.disabled = false;
+        analyzeBtn.innerHTML = '<span>Run Clinical Screening</span>';
+      }
+    });
+  </script>
+</body>
+</html>

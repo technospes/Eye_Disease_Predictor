@@ -1,0 +1,59 @@
+{
+  "datasets": {
+    "ODIR": {
+      "manifest_rows": 8000,
+      "ok_images": 8000,
+      "ok_labelled": 6392,
+      "ok_unlabelled": 1608,
+      "unlabelled_examples": [
+        "ODIR-5K/Testing Images/1000_left.jpg",
+        "ODIR-5K/Testing Images/1000_right.jpg",
+        "ODIR-5K/Testing Images/1001_left.jpg",
+        "ODIR-5K/Testing Images/1001_right.jpg",
+        "ODIR-5K/Testing Images/1002_left.jpg",
+        "ODIR-5K/Testing Images/1002_right.jpg",
+        "ODIR-5K/Testing Images/1003_left.jpg",
+        "ODIR-5K/Testing Images/1003_right.jpg",
+        "ODIR-5K/Testing Images/1004_left.jpg",
+        "ODIR-5K/Testing Images/1004_right.jpg"
+      ],
+      "ambiguous_filenames": 0,
+      "ambiguous_examples": [],
+      "label_rows": 6392,
+      "labels_for_unusable_images": 0,
+      "labels_without_image": 0,
+      "labels_without_image_examples": [],
+      "conflicting_label_keys_dropped": 0
+    },
+    "APTOS": {
+      "manifest_rows": 3662,
+      "ok_images": 3534,
+      "ok_labelled": 3534,
+      "ok_unlabelled": 0,
+      "unlabelled_examples": [],
+      "ambiguous_filenames": 0,
+      "ambiguous_examples": [],
+      "label_rows": 3662,
+      "labels_for_unusable_images": 0,
+      "labels_without_image": 0,
+      "labels_without_image_examples": [],
+      "conflicting_label_keys_dropped": 0
+    }
+  },
+  "conflicting_images": 4,
+  "conflicts_excluded": true,
+  "final_rows": 9922,
+  "split_groups": 6865,
+  "largest_split_group": 8,
+  "class_counts": {
+    "APTOS/dr_label=0": 1796,
+    "APTOS/dr_label=1": 1734,
+    "ODIR/dr_label=0": 4784,
+    "ODIR/dr_label=1": 1608
+  },
+  "label_sources": [
+    "aptos_diagnosis",
+    "odir_labels_per_eye"
+  ],
+  "problems": []
+}
